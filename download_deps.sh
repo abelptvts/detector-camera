@@ -1,5 +1,6 @@
 #! /bin/bash
 
+mkdir deps
 echo 'Downloading tensorflow source...'
 wget https://github.com/tensorflow/tensorflow/archive/v2.0.0.zip -P ./deps/ > /dev/null
 unzip deps/v2.0.0.zip -d ./deps/ > /dev/null
