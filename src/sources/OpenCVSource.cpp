@@ -86,7 +86,6 @@ void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> &
     }
 
     for (const auto &it : detections) {
-        // our rectangle...
         cv::Rect rect(it.x - it.width / 2, it.y - it.height / 2, it.width, it.height);
         cv::rectangle(picture, rect, cv::Scalar(0, 255, 0));
         std::cout << it.className << " " << it.confidence << std::endl;

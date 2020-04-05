@@ -59,8 +59,6 @@ std::vector<Detection> TFLiteDetector<T>::detect(Frame<T> &frame) const {
         }
     }
 
-    std::cout << "Invoking" << std::endl;
-
     if (interpreter->Invoke() != kTfLiteOk) {
         throw DetectorAppException("inference failed");
     }
