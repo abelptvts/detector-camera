@@ -1,26 +1,48 @@
+#define DEBUG
+
 #include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/imgcodecs.hpp>
+#include <csignal>
+
+#include "detectors/YoloV2Detector.h"
+#include "sources/OpenCVSource.h"
+#include "app/App.h"
+#include "app/DetectorAppException.h"
+
+bool running = true;
 
 int main() {
-    cv::Mat frame;
-    cv::VideoCapture cap;
-    int deviceID = 0;             // 0 = open default camera
-    int apiID = cv::CAP_ANY;      // 0 = autodetect default API
-    // open selected camera using selected API
-    cap.open(deviceID + apiID);
-    // check if we succeeded
-    if (!cap.isOpened()) {
-        std::cerr << "ERROR! Unable to open camera\n";
-        return -1;
+    std::string modelPath = "../assets/yolov2-tiny.tflite";
+    std::string metaPath = "../assets/yolov2-tiny.meta";
+    try {
+        YoloV2Detector detector(modelPath, metaPath);
+        OpenCVSource source;
+
+        source.setRequiredChannels(detector.getRequiredChannels());
+        source.setRequiredHeight(detector.getRequiredHeight());
+        source.setRequiredWidth(detector.getRequiredWidth());
+
+        source.open();
+
+        App<float> app(&source, &detector);
+
+        app.start();
+
+        signal(SIGTERM, [](int signum) {
+            running = false;
+        });
+
+        while (running) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+
+        std::cout << "Stopping" << std::endl;
+
+        app.stop();
+
+        source.close();
+    } catch (DetectorAppException &e) {
+        std::cerr << e.what() << std::endl;
     }
-    cap >> frame;
 
-    cap.release();
-
-    cv::imwrite("frame.jpg", frame);
-
-    std::cout << "hello\n";
     return 0;
 }

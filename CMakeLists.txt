@@ -29,7 +29,7 @@ else ()
     include_directories(${OpenCV_INCLUDE_DIRS})
 endif ()
 
-file(GLOB SRC "src/*.cpp")
+file(GLOB SRC "src/*.cpp" "src/*.h" "src/**/*.cpp" "src/**/*.h" "src/**/*.tpp" "src/**/*.hpp" )
 add_executable(detector_camera ${SRC})
 if (${CMAKE_CXX_COMPILER} MATCHES arm)
     target_link_libraries(detector_camera tensorflow opencv-core opencv-imgcodecs opencv-imgproc opencv-videoio pthread)
