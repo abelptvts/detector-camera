@@ -23,7 +23,7 @@ public:
 
     explicit TFLiteDetector(const std::string &modelPath);
 
-    std::vector<Detection> detect(Frame<T> &frame) const override;
+    std::vector<Detection> detect(Frame<T> *frame) const override;
 
 protected:
     virtual std::vector<Detection> postProcess() const = 0;

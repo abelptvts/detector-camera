@@ -25,7 +25,8 @@ public:
     }
 
 public:
-    virtual Frame<T> fetch() = 0;
+    virtual Frame<T> *fetch() = 0;
 
-    virtual void writeToFile(const std::string &filename, const Frame<T> &frame, const std::vector<Detection> &detections) = 0;
+    virtual void
+    writeToFile(const std::string &filename, const Frame<T> *frame, const std::vector<Detection> &detections) = 0;
 };

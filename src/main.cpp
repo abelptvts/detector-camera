@@ -10,7 +10,7 @@
 
 bool running = true;
 
-int main() {
+int main(int argc, char **argv) {
     std::string modelPath = "../assets/yolov2-tiny.tflite";
     std::string metaPath = "../assets/yolov2-tiny.meta";
     try {
@@ -25,6 +25,11 @@ int main() {
 
         App<float> app(&source, &detector);
 
+        if(argc > 1 && strcmp(argv[1], "oneshot") == 0) {
+            app.oneShot();
+            return 0;
+        }
+
         app.start();
 
         signal(SIGTERM, [](int signum) {
@@ -35,13 +40,12 @@ int main() {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
 
-        std::cout << "Stopping" << std::endl;
-
         app.stop();
 
         source.close();
     } catch (DetectorAppException &e) {
         std::cerr << e.what() << std::endl;
+        return -1;
     }
 
     return 0;

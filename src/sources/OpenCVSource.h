@@ -13,9 +13,9 @@ private:
 public:
     OpenCVSource();
 
-    Frame<float> fetch() override;
+    Frame<float> *fetch() override;
 
-    void writeToFile(const std::string &filename, const Frame<float> &frame,
+    void writeToFile(const std::string &filename, const Frame<float> *frame,
                      const std::vector<Detection> &detections) override;
 
     void open(const std::string &sourceId = "");

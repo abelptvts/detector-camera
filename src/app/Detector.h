@@ -7,5 +7,5 @@
 template<typename T>
 class Detector {
 public:
-    virtual std::vector<Detection> detect(Frame<T> &frame) const = 0;
+    virtual std::vector<Detection> detect(Frame<T> *frame) const = 0;
 };

@@ -13,7 +13,7 @@ private:
     Detector<T> *detector;
 
     std::atomic<bool> running{};
-    ThreadSafeQueue<Frame<T> > queue;
+    ThreadSafeQueue<Frame<T>* > queue;
     std::thread fetchThread;
     std::thread detectionThread;
 

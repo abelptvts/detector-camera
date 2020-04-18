@@ -33,8 +33,6 @@ YoloV2Detector::YoloV2Detector(
 }
 
 std::vector<Detection> YoloV2Detector::postProcess() const {
-    std::cout << "Post processing" << std::endl;
-
     std::vector<Detection> result;
 
     auto compareDetections = [](Detection &d1, Detection &d2) {

@@ -5,5 +5,5 @@ struct Frame {
     int width;
     int height;
     int channels;
-    T *data;
+    std::vector<T> data;
 };

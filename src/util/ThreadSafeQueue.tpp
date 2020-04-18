@@ -10,9 +10,7 @@ T ThreadSafeQueue<T>::pop_front() {
 
     auto val = this->queue.front();
     this->queue.pop();
-    if(this->queue.size() < this->maxSize) {
-        this->conditionVariable.notify_one();
-    }
+    this->conditionVariable.notify_one();
     lock.unlock();
     return val;
 }
@@ -20,7 +18,7 @@ T ThreadSafeQueue<T>::pop_front() {
 template<typename T>
 void ThreadSafeQueue<T>::push(T &value) {
     std::unique_lock<std::mutex> lock(this->mutex);
-    if (this->queue.size() >= this->maxSize) {
+    if (this->queue.size() == this->maxSize) {
         this->conditionVariable.wait(lock);
     }
 

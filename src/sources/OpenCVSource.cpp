@@ -9,7 +9,7 @@ OpenCVSource::OpenCVSource() {
     this->capture = cv::VideoCapture();
 }
 
-Frame<float> OpenCVSource::fetch() {
+Frame<float> *OpenCVSource::fetch() {
     cv::Mat capturedFrame;
     this->capture >> capturedFrame;
 
@@ -19,8 +19,8 @@ Frame<float> OpenCVSource::fetch() {
         throw DetectorAppException("capturedFrame number of channels does not match required number of channels");
     }
 
-    auto frame = Frame<float>();
-    frame.data = new float[this->requiredWidth * this->requiredHeight * this->requiredChannels];
+    auto *frame = new Frame<float>();
+    frame->data = std::vector<float>(this->requiredWidth * this->requiredHeight * this->requiredChannels);
 
     size_t index = 0;
     for (int y = 0; y < this->requiredHeight; ++y) {
@@ -28,14 +28,14 @@ Frame<float> OpenCVSource::fetch() {
             index = (y * this->requiredWidth + x) * this->requiredChannels;
             for (int c = 0; c < this->requiredChannels; ++c) {
                 // opencv returns frames in BGR format
-                frame.data[index + c] = resized.data[index + (this->requiredChannels - c - 1)] / 255.0f;
+                frame->data[index + c] = resized.data[index + (this->requiredChannels - c - 1)] / 255.0f;
             }
         }
     }
 
-    frame.channels = this->requiredChannels;
-    frame.height = this->requiredHeight;
-    frame.width = this->requiredWidth;
+    frame->channels = this->requiredChannels;
+    frame->height = this->requiredHeight;
+    frame->width = this->requiredWidth;
 
     return frame;
 }
@@ -67,20 +67,20 @@ void OpenCVSource::close() {
     this->capture.release();
 }
 
-void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> &frame,
+void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> *frame,
                                const std::vector<Detection> &detections) {
     if (detections.size() == 0) {
         return;
     }
 
-    cv::Mat picture(frame.height, frame.width, CV_8UC3);
+    cv::Mat picture(frame->height, frame->width, CV_8UC3);
     size_t index = 0;
-    for (int y = 0; y < frame.height; ++y) {
-        for (int x = 0; x < frame.width; ++x) {
-            index = (y * frame.width + x) * frame.channels;
-            for (int c = 0; c < frame.channels; ++c) {
+    for (int y = 0; y < frame->height; ++y) {
+        for (int x = 0; x < frame->width; ++x) {
+            index = (y * frame->width + x) * frame->channels;
+            for (int c = 0; c < frame->channels; ++c) {
                 // opencv returns frames in BGR format
-                picture.data[index + c] = frame.data[index + (frame.channels - c - 1)] * 255;
+                picture.data[index + c] = frame->data[index + (frame->channels - c - 1)] * 255;
             }
         }
     }

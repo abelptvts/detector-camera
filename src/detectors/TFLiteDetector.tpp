@@ -18,7 +18,7 @@ TFLiteDetector<T>::TFLiteDetector(const std::string &modelPath): Detector<T>() {
     tflite::ops::builtin::BuiltinOpResolver resolver;
     tflite::InterpreterBuilder interpreterBuilder(*(this->model), resolver);
     interpreterBuilder(&(this->interpreter));
-
+    this->interpreter->SetNumThreads(2);
     if (this->interpreter->AllocateTensors() != kTfLiteOk) {
         throw DetectorAppException("could not allocate interpreter tensors");
     }
@@ -43,7 +43,7 @@ TFLiteDetector<T>::TFLiteDetector(const std::string &modelPath): Detector<T>() {
 }
 
 template<typename T>
-std::vector<Detection> TFLiteDetector<T>::detect(Frame<T> &frame) const {
+std::vector<Detection> TFLiteDetector<T>::detect(Frame<T> *frame) const {
     auto *input = this->interpreter->template typed_tensor<T>(this->inputTensorIdx);
     if (input == nullptr) {
         throw DetectorAppException("input tensor is nullptr");
@@ -53,7 +53,7 @@ std::vector<Detection> TFLiteDetector<T>::detect(Frame<T> &frame) const {
     for (int h = 0; h < this->requiredHeight; ++h) {
         for (int w = 0; w < this->requiredWidth; ++w) {
             for (int c = 0; c < this->requiredChannels; ++c) {
-                input[index] = frame.data[index];
+                input[index] = frame->data[index];
                 ++index;
             }
         }
