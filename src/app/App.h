@@ -6,6 +6,7 @@
 #include "Source.h"
 #include "../util/ThreadSafeQueue.h"
 #include "Api.h"
+#include "Config.h"
 
 template<typename T>
 class App {
@@ -13,6 +14,7 @@ private:
     Source<T> *source;
     Detector<T> *detector;
     Api *api;
+    Config config;
 
     std::atomic<bool> running{};
     ThreadSafeQueue<Frame<T> *> queue;
@@ -29,7 +31,9 @@ private:
     void detectionTask();
 
 public:
-    App(Source<T> *src, Detector<T> *det, Api *api) : source(src), detector(det), api(api), queue(30) {}
+    App(Source<T> *src, Detector<T> *det, Api *api, Config &config) : source(src), detector(det),
+                                                                      api(api), queue(config.QUEUE_MAX_ITEMS),
+                                                                      config(config) {}
 
     void start();
 

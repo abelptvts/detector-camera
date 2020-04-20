@@ -8,7 +8,7 @@ private:
     std::vector<float> anchors;
     const float THRESHOLD = .5f;
 public:
-    explicit YoloV2Detector(const std::string &modelPath, const std::string &metaPath);
+    explicit YoloV2Detector(const std::string &modelPath, const std::string &metaPath, int numThreads = -1);
 
 protected:
     std::vector<Detection> postProcess() const override;

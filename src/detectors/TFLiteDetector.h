@@ -21,7 +21,7 @@ public:
 
     int getRequiredChannels() const;
 
-    explicit TFLiteDetector(const std::string &modelPath);
+    explicit TFLiteDetector(const std::string &modelPath, int numThreads = -1);
 
     std::vector<Detection> detect(Frame<T> *frame) const override;
 

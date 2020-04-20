@@ -8,12 +8,13 @@
 class HttpApi : public Api {
 private:
     std::string baseUrl;
+    int port;
     std::string token;
 
     httplib::Client *httpClient;
 
 public:
-    HttpApi(std::string baseUrl, std::string token);
+    HttpApi(std::string baseUrl, int port, std::string token);
 
     ~HttpApi() {
         delete this->httpClient;

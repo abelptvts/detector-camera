@@ -8,18 +8,20 @@
 #include "app/App.h"
 #include "app/DetectorAppException.h"
 #include "api/HttpApi.h"
+#include "util/config.hpp"
 
 bool running = true;
 
 int main(int argc, char **argv) {
     std::string modelPath = "../assets/yolov2-tiny.tflite";
     std::string metaPath = "../assets/yolov2-tiny.meta";
+    std::string configPath = "../detector_camera.conf";
 
     try {
-        YoloV2Detector detector(modelPath, metaPath);
+        Config config;
+        YoloV2Detector detector(modelPath, metaPath, config.NUM_DETECTION_THREADS);
         OpenCVSource source;
-        HttpApi api("localhost:3000",
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6ImNhbWVyYSIsImlhdCI6MTU4Njg5NDMyMn0.MxUlnZ7IesDpVBFWfgisga8YueBGeoEUvy2TrHW60F4");
+        HttpApi api(config.API_HOSTNAME, config.API_PORT, config.TOKEN);
 
         source.setRequiredChannels(detector.getRequiredChannels());
         source.setRequiredHeight(detector.getRequiredHeight());
@@ -27,11 +29,11 @@ int main(int argc, char **argv) {
 
         source.open();
 
-        App<float> app(&source, &detector, &api);
+        App<float> app(&source, &detector, &api, config);
 
-        if (argc > 1 && strcmp(argv[1], "oneshot") == 0) {
-            app.oneShot();
-            return 0;
+        if (argc > 2 && strcmp(argv[1], "--config") == 0) {
+            std::string path(argv[2]);
+            parseConfig(path, config);
         }
 
         app.start();

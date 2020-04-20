@@ -4,12 +4,9 @@
 #include <utility>
 #include <iomanip>
 
-HttpApi::HttpApi(std::string baseUrl, std::string token) : Api(), baseUrl(std::move(baseUrl)), token(std::move(token)) {
-    auto delimIdx = this->baseUrl.find(':');
-    auto hostname = this->baseUrl.substr(0, delimIdx);
-    auto port = std::stoi(this->baseUrl.substr(delimIdx + 1, this->baseUrl.length()));
-
-    this->httpClient = new httplib::Client(hostname, port);
+HttpApi::HttpApi(std::string baseUrl, int port, std::string token)
+        : Api(), baseUrl(std::move(baseUrl)), port(port), token(std::move(token)) {
+    this->httpClient = new httplib::Client(this->baseUrl, this->port);
 }
 
 std::string toISOString(std::chrono::system_clock::time_point date) {
@@ -41,6 +38,8 @@ HttpApi::createDetection(std::string pathToCapture, std::chrono::system_clock::t
     if (res == nullptr) {
         throw DetectorAppException("API response is null");
     }
-    std::cout << res->body << std::endl;
+    if (res->status != 201) {
+        throw DetectorAppException("API error: " + res->body);
+    }
 }
 
