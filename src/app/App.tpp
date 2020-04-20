@@ -31,30 +31,57 @@ void App<T>::oneShot() {
     auto end = std::chrono::high_resolution_clock::now();
     std::cout << "Detecting took: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
               << std::endl;
-    this->source->writeToFile("out.png", frame, detections);
+    this->source->writeToFile("capture.png", frame, detections);
     delete frame;
 }
 
 template<typename T>
 void App<T>::fetchTask() {
     while (this->running) {
-        auto *frame = this->source->fetch();
-        this->queue.push(frame);
-        std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+        try {
+            auto *frame = this->source->fetch();
+            this->queue.push(frame);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        } catch (ThreadSafeQueueException &e) {
+            continue;
+        }
     }
 }
 
 template<typename T>
 void App<T>::detectionTask() {
     while (this->running) {
-        auto *frame = this->queue.pop_front();
-        std::cout << "Detecting..." << std::endl;
-        auto detections = this->detector->detect(frame);
-        std::cout << "DONE!" << std::endl;
-        this->source->writeToFile("out.png", frame, detections);
+        try {
+            auto *frame = this->queue.pop_front();
 
-        delete frame;
+            auto startDetection = std::chrono::system_clock::now();
+            auto detections = this->detector->detect(frame);
+            auto endDetection = std::chrono::system_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(endDetection - startDetection);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            this->avgDetectionTime *= this->totalDetections;
+            this->avgDetectionTime += duration.count();
+            this->totalDetections++;
+            this->avgDetectionTime /= this->totalDetections;
+
+            if (detections.empty()) {
+                continue;
+            }
+
+            this->source->writeToFile("capture.png", frame, detections);
+
+            auto now = std::chrono::system_clock::now();
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - this->lastDetectionTime);
+            if (seconds.count() > 2) {
+                this->api->createDetection("capture.png", frame->date);
+                this->lastDetectionTime = now;
+            }
+
+            delete frame;
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        } catch (ThreadSafeQueueException &e) {
+            continue;
+        }
     }
 }

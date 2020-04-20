@@ -1,10 +1,14 @@
 
 #include "ThreadSafeQueue.h"
+#include "ThreadSafeQueueExeption.h"
 
 template<typename T>
 T ThreadSafeQueue<T>::pop_front() {
     std::unique_lock<std::mutex> lock(this->mutex);
     while (this->queue.empty()) {
+        if (this->conditionVariable.wait_for(lock, std::chrono::milliseconds(5000)) == std::cv_status::timeout) {
+            throw ThreadSafeQueueException("thread-safe queue pop timeout");
+        }
         this->conditionVariable.wait(lock);
     }
 
@@ -19,7 +23,9 @@ template<typename T>
 void ThreadSafeQueue<T>::push(T &value) {
     std::unique_lock<std::mutex> lock(this->mutex);
     if (this->queue.size() == this->maxSize) {
-        this->conditionVariable.wait(lock);
+        if (this->conditionVariable.wait_for(lock, std::chrono::milliseconds(5000)) == std::cv_status::timeout) {
+            throw ThreadSafeQueueException("thread-safe queue push timeout");
+        }
     }
 
     this->queue.push(value);

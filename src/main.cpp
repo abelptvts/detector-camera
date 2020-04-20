@@ -7,15 +7,19 @@
 #include "sources/OpenCVSource.h"
 #include "app/App.h"
 #include "app/DetectorAppException.h"
+#include "api/HttpApi.h"
 
 bool running = true;
 
 int main(int argc, char **argv) {
     std::string modelPath = "../assets/yolov2-tiny.tflite";
     std::string metaPath = "../assets/yolov2-tiny.meta";
+
     try {
         YoloV2Detector detector(modelPath, metaPath);
         OpenCVSource source;
+        HttpApi api("localhost:3000",
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6ImNhbWVyYSIsImlhdCI6MTU4Njg5NDMyMn0.MxUlnZ7IesDpVBFWfgisga8YueBGeoEUvy2TrHW60F4");
 
         source.setRequiredChannels(detector.getRequiredChannels());
         source.setRequiredHeight(detector.getRequiredHeight());
@@ -23,16 +27,16 @@ int main(int argc, char **argv) {
 
         source.open();
 
-        App<float> app(&source, &detector);
+        App<float> app(&source, &detector, &api);
 
-        if(argc > 1 && strcmp(argv[1], "oneshot") == 0) {
+        if (argc > 1 && strcmp(argv[1], "oneshot") == 0) {
             app.oneShot();
             return 0;
         }
 
         app.start();
 
-        signal(SIGTERM, [](int signum) {
+        signal(SIGINT, [](int signum) {
             running = false;
         });
 
@@ -41,6 +45,7 @@ int main(int argc, char **argv) {
         }
 
         app.stop();
+        std::cout << "Average detection time: " << app.getAvgDetectionTime() << " ms" << std::endl;
 
         source.close();
     } catch (DetectorAppException &e) {

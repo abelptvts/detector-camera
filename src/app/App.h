@@ -5,29 +5,41 @@
 #include "Detector.h"
 #include "Source.h"
 #include "../util/ThreadSafeQueue.h"
+#include "Api.h"
 
 template<typename T>
 class App {
 private:
     Source<T> *source;
     Detector<T> *detector;
+    Api *api;
 
     std::atomic<bool> running{};
-    ThreadSafeQueue<Frame<T>* > queue;
+    ThreadSafeQueue<Frame<T> *> queue;
     std::thread fetchThread;
     std::thread detectionThread;
+
+    std::chrono::system_clock::time_point lastDetectionTime = std::chrono::system_clock::now();
+
+    float avgDetectionTime = 0;
+    unsigned long long totalDetections = 0;
 
     void fetchTask();
 
     void detectionTask();
 
 public:
-    App(Source<T> *src, Detector<T> *det) : source(src), detector(det), queue(30) {}
+    App(Source<T> *src, Detector<T> *det, Api *api) : source(src), detector(det), api(api), queue(30) {}
 
     void start();
+
     void stop();
 
     void oneShot();
+
+    float getAvgDetectionTime() {
+        return this->avgDetectionTime;
+    }
 };
 
 #include "App.tpp"

@@ -33,9 +33,11 @@ Frame<float> *OpenCVSource::fetch() {
         }
     }
 
+    auto now = std::chrono::system_clock::now();
     frame->channels = this->requiredChannels;
     frame->height = this->requiredHeight;
     frame->width = this->requiredWidth;
+    frame->date = now;
 
     return frame;
 }
@@ -69,10 +71,6 @@ void OpenCVSource::close() {
 
 void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> *frame,
                                const std::vector<Detection> &detections) {
-    if (detections.size() == 0) {
-        return;
-    }
-
     cv::Mat picture(frame->height, frame->width, CV_8UC3);
     size_t index = 0;
     for (int y = 0; y < frame->height; ++y) {
@@ -88,7 +86,6 @@ void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> *
     for (const auto &it : detections) {
         cv::Rect rect(it.x - it.width / 2, it.y - it.height / 2, it.width, it.height);
         cv::rectangle(picture, rect, cv::Scalar(0, 255, 0));
-        std::cout << it.className << " " << it.confidence << std::endl;
     }
 
     const auto resized = this->resize(picture, this->captureWidth, this->captureHeight);
