@@ -7,4 +7,5 @@ RUN dpkg --add-architecture armhf && \
 	    cmake \
 	    gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
 	    unzip wget curl \
-	    libopencv-videoio-dev:armhf
+	    libopencv-videoio-dev:armhf \
+	    libssl-dev:armhf

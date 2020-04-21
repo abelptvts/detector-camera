@@ -1,0 +1,1 @@
+docker build . -t detector-camera-build-arm

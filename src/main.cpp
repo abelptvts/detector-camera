@@ -9,7 +9,6 @@
 #include "app/DetectorAppException.h"
 #include "api/HttpApi.h"
 #include "util/config.hpp"
-
 bool running = true;
 
 int main(int argc, char **argv) {
