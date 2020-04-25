@@ -19,8 +19,12 @@ void App<T>::start() {
 template<typename T>
 void App<T>::stop() {
     this->running = false;
-    this->fetchThread.join();
-    this->detectionThread.join();
+    if (this->fetchThread.joinable()) {
+        this->fetchThread.join();
+    }
+    if (this->detectionThread.joinable()) {
+        this->detectionThread.join();
+    }
 }
 
 template<typename T>

@@ -1,5 +1,6 @@
 #include "HttpApi.h"
 #include "../app/DetectorAppException.h"
+#include "../util/json.hpp"
 
 #include <utility>
 #include <iomanip>
@@ -41,5 +42,23 @@ HttpApi::createDetection(std::string pathToCapture, std::chrono::system_clock::t
     if (res->status != 201) {
         throw DetectorAppException("API error: " + res->body);
     }
+}
+
+bool HttpApi::getShouldStart() {
+    httplib::Headers headers = {
+            {"Authorization", "Bearer " + this->token}
+    };
+    auto res = this->httpClient->Get("/api/cameras/me", headers);
+    if (res == nullptr) {
+        throw DetectorAppException("API response is null");
+    }
+    if (res->status != 200) {
+        throw DetectorAppException("API error: " + res->body);
+    }
+
+    using json = nlohmann::json;
+    auto body = json::parse(res->body);
+
+    return body["enabled"];
 }
 

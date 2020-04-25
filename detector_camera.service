@@ -1,0 +1,9 @@
+[Unit]
+Description=Detector Camera by Abel Putovits
+
+[Service]
+ExecStart=/usr/bin/detector_camera
+Restart=on-abnormal
+
+[Install]
+WantedBy=multi-user.target

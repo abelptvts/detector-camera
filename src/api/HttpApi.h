@@ -20,6 +20,8 @@ public:
         delete this->httpClient;
     }
 
+    bool getShouldStart();
+
     void
     createDetection(std::string pathToCapture, std::chrono::system_clock::time_point &date) override;
 };
