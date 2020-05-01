@@ -23,6 +23,10 @@ void parseConfig(std::string &path, Config &config) {
         auto value = line.substr(delimiterIdx + 1, line.length());
 
         try {
+            if (key == "CAPTURE_URL") {
+                config.CAPTURE_URL = value;
+                continue;
+            }
             if (key == "YOLOV2_TINY_MODEL_PATH") {
                 config.YOLOV2_TINY_MODEL_PATH = value;
                 continue;

@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
         source.setRequiredHeight(detector.getRequiredHeight());
         source.setRequiredWidth(detector.getRequiredWidth());
 
-        source.open();
+        source.open(config.CAPTURE_URL);
         std::cout << "Source FPS: " << source.getFPS() << std::endl;
 
         App<float> app(&source, &detector, &api, config);

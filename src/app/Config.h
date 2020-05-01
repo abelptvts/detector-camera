@@ -3,6 +3,7 @@
 #include <string>
 
 struct Config {
+    std::string CAPTURE_URL;
     std::string YOLOV2_TINY_MODEL_PATH = "../assets/yolov2-tiny/";
     int NUM_DETECTION_THREADS = 2;
     int SLEEP_BETWEEN_DETECTIONS = 100;
