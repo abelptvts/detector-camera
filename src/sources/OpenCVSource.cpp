@@ -93,4 +93,8 @@ void OpenCVSource::writeToFile(const std::string &filename, const Frame<float> *
     cv::imwrite(filename, resized);
 }
 
+double OpenCVSource::getFPS() const {
+    return this->capture.get(cv::CAP_PROP_FPS);
+}
+
 

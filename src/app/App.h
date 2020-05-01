@@ -26,6 +26,8 @@ private:
     float avgDetectionTime = 0;
     unsigned long long totalDetections = 0;
 
+    float totalSourcePushWaitTime = 0;
+
     void fetchTask();
 
     void detectionTask();
@@ -41,8 +43,12 @@ public:
 
     void oneShot();
 
-    float getAvgDetectionTime() {
+    float getAvgDetectionTime() const {
         return this->avgDetectionTime;
+    }
+
+    float getTotalSourcePushWaitTime() const {
+        return this->totalSourcePushWaitTime;
     }
 };
 

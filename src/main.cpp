@@ -23,7 +23,7 @@ int main(int argc, char **argv) {
         Config config;
 
         if (argc > 2 && strcmp(argv[1], "--config") == 0) {
-            configPath = argv[1];
+            configPath = argv[2];
         }
 
         parseConfig(configPath, config);
@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
         source.setRequiredWidth(detector.getRequiredWidth());
 
         source.open();
+        std::cout << "Source FPS: " << source.getFPS() << std::endl;
 
         App<float> app(&source, &detector, &api, config);
 
@@ -72,6 +73,7 @@ int main(int argc, char **argv) {
 
         app.stop();
         std::cout << "Average detection time: " << app.getAvgDetectionTime() << " ms" << std::endl;
+        std::cout << "Total source push wait time: " << app.getTotalSourcePushWaitTime() << " seconds" << std::endl;
 
         source.close();
     } catch (DetectorAppException &e) {

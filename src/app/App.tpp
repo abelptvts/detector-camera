@@ -44,7 +44,13 @@ void App<T>::fetchTask() {
     while (this->running) {
         try {
             auto *frame = this->source->fetch();
+
+            auto startPush = std::chrono::system_clock::now();
             this->queue.push(frame);
+            auto endPush = std::chrono::system_clock::now();
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(endPush - startPush);
+            this->totalSourcePushWaitTime += seconds.count();
+
             std::this_thread::sleep_for(std::chrono::milliseconds(this->config.SLEEP_BETWEEN_FRAME_FETCHES));
         } catch (ThreadSafeQueueException &e) {
             continue;

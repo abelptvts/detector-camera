@@ -22,6 +22,8 @@ public:
 
     void close();
 
+    double getFPS() const;
+
 private:
     const cv::Mat &resize(const cv::Mat &frame, size_t width, size_t height) const;
 };

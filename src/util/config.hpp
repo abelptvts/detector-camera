@@ -9,7 +9,7 @@
 void parseConfig(std::string &path, Config &config) {
     std::ifstream file(path);
     if (!file.is_open()) {
-        throw DetectorAppException("could not open config file");
+        throw DetectorAppException("could not open config file " + path);
     }
 
     std::string line;
