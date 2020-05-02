@@ -37,9 +37,12 @@ cd ../
 
 echo 'Downloading socket io'
 if [ ! -d "./socket.io-client-cpp/" ]; then
-  git clone --recurse-submodules https://github.com/socketio/socket.io-client-cpp.git
+#  git clone --recurse-submodules https://github.com/socketio/socket.io-client-cpp.git
+  git clone --recurse-submodules https://github.com/ErisExchange/socket.io-client-cpp.git
 fi
 cd socket.io-client-cpp
+git checkout eris
+git pull
 cd ./lib/websocketpp/
 git checkout master
 git pull

@@ -1,5 +1,3 @@
-#define DEBUG
-
 #include <iostream>
 #include <csignal>
 
@@ -45,9 +43,9 @@ int main(int argc, char **argv) {
 
         App<float> app(&source, &detector, &api, config);
 
-        sio::client client;
         std::string socketURI = (config.API_PORT == 443 ? "https://" : "http://") + config.API_HOSTNAME + ':' +
                                 std::to_string(config.API_PORT);
+        sio::client client(socketURI);
         std::map<std::string, std::string> headers = {{"Authorization", config.TOKEN}};
         client.connect(socketURI, {}, headers);
 

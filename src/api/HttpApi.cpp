@@ -7,7 +7,12 @@
 
 HttpApi::HttpApi(std::string baseUrl, int port, std::string token)
         : Api(), baseUrl(std::move(baseUrl)), port(port), token(std::move(token)) {
-    this->httpClient = new httplib::Client(this->baseUrl, this->port);
+    if (this->port == 443) {
+        this->httpClient = new httplib::SSLClient(this->baseUrl, this->port);
+    } else {
+        this->httpClient = new httplib::Client(this->baseUrl, this->port);
+    }
+    this->httpClient->set_timeout_sec(3);
 }
 
 std::string toISOString(std::chrono::system_clock::time_point date) {

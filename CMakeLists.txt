@@ -3,6 +3,8 @@ project(detector_camera)
 
 set(CMAKE_CXX_STANDARD 11)
 
+find_package(OpenSSL REQUIRED)
+
 add_library(tensorflow STATIC IMPORTED)
 include_directories(${CMAKE_SOURCE_DIR}/deps/tensorflow-2.0.0/ ${CMAKE_SOURCE_DIR}/deps/tensorflow-2.0.0/tensorflow/lite/tools/make/downloads/absl ${CMAKE_SOURCE_DIR}/deps/tensorflow-2.0.0/tensorflow/lite/tools/make/downloads/flatbuffers/include)
 if (${CMAKE_CXX_COMPILER} MATCHES arm)
@@ -45,9 +47,9 @@ set_target_properties(boost-system PROPERTIES IMPORTED_LOCATION ${CMAKE_SOURCE_D
 file(GLOB SRC "src/*.cpp" "src/*.h" "src/**/*.cpp" "src/**/*.h" "src/**/*.tpp" "src/**/*.hpp")
 add_executable(detector_camera ${SRC})
 if (${CMAKE_CXX_COMPILER} MATCHES arm)
-    target_link_libraries(detector_camera tensorflow opencv-core opencv-imgcodecs opencv-imgproc opencv-videoio pthread sioclient sioclient-tls boost-date boost-random boost-random boost-system)
+    target_link_libraries(detector_camera OpenSSL::SSL tensorflow opencv-core opencv-imgcodecs opencv-imgproc opencv-videoio pthread sioclient-tls boost-date boost-random boost-random boost-system)
 else ()
-    target_link_libraries(detector_camera tensorflow ${OpenCV_LIBS} pthread sioclient sioclient-tls boost-date boost-random boost-random boost-system)
+    target_link_libraries(detector_camera OpenSSL::SSL tensorflow ${OpenCV_LIBS} pthread sioclient-tls boost-date boost-random boost-random boost-system)
 endif ()
 
 install(TARGETS detector_camera RUNTIME DESTINATION bin)
