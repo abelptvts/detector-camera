@@ -7,7 +7,8 @@
 YoloV2Detector::YoloV2Detector(
         const std::string &modelPath,
         const std::string &metaPath,
-        int numThreads) : TFLiteDetector<float>(modelPath, numThreads) {
+        int numThreads,
+        float precisionThreshold) : TFLiteDetector<float>(modelPath, numThreads), THRESHOLD(precisionThreshold) {
 
     using json = nlohmann::json;
 

@@ -31,7 +31,8 @@ int main(int argc, char **argv) {
         std::string modelPath = config.YOLOV2_TINY_MODEL_PATH + "yolov2-tiny.tflite";
         std::string metaPath = config.YOLOV2_TINY_MODEL_PATH + "yolov2-tiny.meta";
 
-        YoloV2Detector detector(modelPath, metaPath, config.NUM_DETECTION_THREADS);
+        YoloV2Detector detector(modelPath, metaPath, config.NUM_DETECTION_THREADS,
+                                config.DETECTION_PRECISION_THRESHOLD);
         OpenCVSource source;
         HttpApi api(config.API_HOSTNAME, config.API_PORT, config.TOKEN);
 

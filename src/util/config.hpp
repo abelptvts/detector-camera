@@ -23,6 +23,10 @@ void parseConfig(std::string &path, Config &config) {
         auto value = line.substr(delimiterIdx + 1, line.length());
 
         try {
+            if (key == "DETECTION_PRECISION_THRESHOLD") {
+                config.DETECTION_PRECISION_THRESHOLD = std::stof(value);
+                continue;
+            }
             if (key == "CAPTURE_URL") {
                 config.CAPTURE_URL = value;
                 continue;
