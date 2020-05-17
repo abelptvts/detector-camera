@@ -8,14 +8,15 @@ on:
 
 jobs:
   build:
-
+    
     runs-on: ubuntu-latest
-
+    container: 
+      image: 'Dockerfile'
     steps:
     - uses: actions/checkout@v2
     - name: download deps
       run: ./download_deps.sh
     - name: setup
-      run: ./setup.sh
+      run: ./setup_arm.sh
     - name: build
       run: ./build.sh
