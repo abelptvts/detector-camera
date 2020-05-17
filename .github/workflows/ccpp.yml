@@ -11,7 +11,7 @@ jobs:
     
     runs-on: ubuntu-latest
     container: 
-      image: 'Dockerfile'
+      image: 'abelptvts/detector-camera-build-arm'
     steps:
     - uses: actions/checkout@v2
     - name: download deps
