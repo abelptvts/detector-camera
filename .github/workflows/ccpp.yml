@@ -29,3 +29,5 @@ jobs:
       run: ./setup_arm.sh
     - name: build
       run: ./build.sh
+    - name: package
+      run: ./package.sh
