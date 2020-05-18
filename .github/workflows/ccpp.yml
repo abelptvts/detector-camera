@@ -16,7 +16,14 @@ jobs:
         DOCKER: 1
     steps:
     - uses: actions/checkout@v2
+    - name: Cache deps
+      id: cache-deps
+      uses: actions/cache@v1
+      with:
+        path: deps
+        key: ${{ runner.os }}-deps
     - name: download deps
+      if: steps.cache-deps.outputs.cache-hit != 'true'
       run: ./download_deps.sh
     - name: setup
       run: ./setup_arm.sh
